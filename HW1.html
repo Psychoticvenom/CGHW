@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html>
+
+<div id="info">I4A49 Homework1<br><br>
+  <button id="toggle" style="width:20%">Start</button>
+  <button id="restart" style="width:20%">Restart</button>
+  <button id="quartzType" style="width:20%">Quartz</button>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js"></script>
+<script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<head>
+<style>
+
+#info {
+	position: absolute;
+	top: 2%;
+	width: 100%;
+	padding: 10px;
+	text-align: center;
+	color: #ffff00
+}
+
+body {
+	overflow: hidden;
+}
+
+</style>
+</head>
+
+<body> 
+<script>
+
+var scene, renderer, camera;
+var controls;
+var angle = 0, stopAngle = 0, turn = false;
+var hue = 0;
+
+var watch = new THREE.Object3D();
+var secHand = new THREE.Object3D();
+var sector;
+
+var startT;
+var clock = new THREE.Clock();
+
+init();
+animate();
+
+$("#toggle").click(function() {
+	
+	if(!turn) {
+		
+		startT = clock.getElapsedTime();
+		$("#toggle").text('Pause');
+	}
+	else {
+		
+		stopAngle = angle;
+		$("#toggle").text('Start');
+	}
+	turn = !turn;
+});
+
+$("#restart").click(function() {
+	
+	$("#toggle").text('Start');
+	turn = false;
+	angle = 0;
+	stopAngle = 0;
+	hue = 0;
+});
+$("#quartzType").click(function() {
+
+	buttonText();
+});
+
+function buttonText() {
+
+	buttonText.serial = buttonText.serial !== undefined ? ++buttonText.serial : 1;
+	if(buttonText.serial > 2){
+		buttonText.serial = 0;
+	}
+	if(buttonText.serial == 0){ // Analog
+		
+		scene.remove(sector);
+		scene.add(watch);
+		$("#quartzType").text('Quartz');
+	}
+	else if(buttonText.serial == 1){ // Quartz
+	
+		$("#quartzType").text('Sector');
+	}
+	else if(buttonText.serial == 2){ // Sector
+	
+		scene.remove(watch);
+		scene.add(sector);
+		$("#quartzType").text('Analog');
+	}
+}
+
+function stopwatch() {
+	
+	var material = new THREE.MeshBasicMaterial({
+		color: 0x888888
+	});
+	var back = new THREE.Mesh(new THREE.CircleGeometry(40, 32),
+							  new THREE.MeshBasicMaterial({color: 0xffffff}));
+	var cube = new THREE.Mesh(new THREE.BoxGeometry(8, 10, 5),
+							  new THREE.MeshBasicMaterial({color: 0x000000}));
+	cube.position.y = 40;
+	watch.add(back);
+	watch.add(cube);
+	
+	var body = new THREE.Mesh(new THREE.BoxGeometry(5, 25, 5), material);
+	var arrow = new THREE.Mesh(new THREE.CylinderGeometry(0, 5, 10, 32), material);
+	body.position.y = 12.5;
+	arrow.position.y = 27.5;
+	secHand.add(body);
+	secHand.add(arrow);
+	watch.add(secHand);
+	scene.add(watch);
+}
+
+function theSector() {
+	
+	var geometry = new THREE.RingGeometry(0.1, 40, 32);
+
+	var material = new THREE.MeshBasicMaterial({
+		color: 0xffff00,
+		side: THREE.DoubleSide
+	});
+	sector = new THREE.Mesh(geometry, material);
+}
+
+function init() {
+
+	scene = new THREE.Scene();
+	renderer = new THREE.WebGLRenderer();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	renderer.setClearColor(0x888888);
+	document.body.appendChild(renderer.domElement);
+
+	camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000);
+	camera.position.z = 150;
+	controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+	stopwatch();
+	theSector();
+
+	window.addEventListener('resize', onWindowResize, false);
+}
+
+function onWindowResize() {
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function animate() {
+
+	if (turn) {
+		
+		if(angle < -Math.PI * 2) {
+		
+			startT = clock.getElapsedTime();
+			stopT = 0;
+			angle = 0;
+			stopAngle = 0;
+			hue = 0;
+		}
+		
+		var dt = clock.getElapsedTime() - startT;
+		if (buttonText.serial == 1){
+		
+			angle = stopAngle - 6 * Math.ceil(dt) / 180 * Math.PI;
+		}
+		else {
+			
+			angle = stopAngle - 6 * dt / 180 * Math.PI;
+			hue = -angle / 6;
+		}
+	}
+	
+	sector.geometry = new THREE.RingGeometry (0.1, 40, 32, 2, Math.PI/2, angle)
+	secHand.rotation.z = angle;
+
+	sector.material.color.setHSL (hue, 1, .5)
+	
+	controls.update();
+	requestAnimationFrame(animate); 
+	renderer.render(scene, camera);
+}
+
+</script>
+</body>
+
+</html>
