@@ -9,8 +9,8 @@
 ##### 作品介紹
 - : Start、Pause Button
 	- 控制碼表的開始及暫停
-- : Restart
+- : Restart Button
 	- 使碼表重新開始計算
-- : Analog、Quartz、Sector
+- : Analog、Quartz、Sector Button
 	- 改變碼表的運動方式及圖形
 - : 在Sector圖形中，我使用了[HSL](http://csscoke.com/2015/01/01/rgb-hsl-hex/)利用Angle調整Hue讓這個圖形隨著進行的角度改變而變色
