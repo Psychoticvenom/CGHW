@@ -32,3 +32,13 @@
 ##### 作品介紹
 - : Q、E旋轉砲台；W、S旋轉砲管；A、D左右移動坦克
 - : Space發射砲彈
+
+### Homework 4 [URL](https://psychoticvenom.github.io/CGHW/HW4.html)
+1.在網路上找合適的車輛模型 (OBJ/MTL format)
+2.利用合適的loader將其匯入three.js 場景中，以適當大小呈現
+3.運用課堂上所教的“kinematic drive"，以鍵盤控制車輛
+4.在場景中佈置大小不同的圓形障礙物。可以用threejs所提供的geometry, 或是使用circular billboard (with cut-out texture)
+5.實作collision detection程式，使得車輛與障礙物相撞時立即停止。使用者須自行將車輛駛出。請務必在所錄的animated.gif中示範此效果
+6.螢幕分割成左右兩viewports: 一邊為上帝視角 (god's eye view), 一邊為駕駛的第三人稱視角 (third person view)
+
+##### 作品介紹
